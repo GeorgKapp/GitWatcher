@@ -10,5 +10,7 @@ the branches for the git repository will be shown:
 ### Delete Branches
 Upon right clicking a branch a menu will be shown and you can click the "Delete" Button.
 After pressing "OK" on the now shown Message Box the selected Branches will be deleted
+![image](https://user-images.githubusercontent.com/46827863/178590082-e54c895f-8fc2-401f-b3d3-773f36e23025.png)
+
 
 ### Further functionality is still pending
