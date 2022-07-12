@@ -1,0 +1,125 @@
+﻿<Window x:Class="GitWatcher.Source.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cc="clr-namespace:CCA9.WPF.Styleguide.StyleguideControls.CustomControls;assembly=CCA9.WPF.Styleguide"
+        xmlns:uc="clr-namespace:CCA9.WPF.Styleguide.StyleguideControls.UserControls;assembly=CCA9.WPF.Styleguide"
+        xmlns:viewModel="clr-namespace:GitWatcher.Source.ViewModels"
+        mc:Ignorable="d"
+        Title="Git Branch Handler" 
+        Height="450" 
+        Width="800" 
+        Background="{DynamicResource disabled}"
+        Closed="Window_Closed">
+
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/CCA9.WPF.Styleguide;component/Styles.xaml"/>
+                
+                <ResourceDictionary>
+                    <Style TargetType="cc:TextBox">
+                        <Setter Property="Background" Value="White"/>
+                    </Style>
+                </ResourceDictionary>
+                
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <cc:TextBox Grid.Column="0" Text="{Binding RepositoryPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <cc:Button Grid.Column="2" Content="Open Git Repository" Command="{Binding OpenGitRepositoryCommand}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,10,0,10" Background="{StaticResource background}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <cc:TextBox Grid.Row="0" HorizontalAlignment="Stretch" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="TextChanged">
+                        <behaviors:InvokeCommandAction Command="{Binding RefreshBranchesViewCommand}"/>
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </cc:TextBox>
+            
+            <DataGrid x:Name="dataGrid" Grid.Row="1" CanUserAddRows="False" ItemsSource="{Binding BranchesView, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
+
+                <DataGrid.Resources>
+                    <ContextMenu x:Key="ticketContextMenu">
+                        <ContextMenu.Items>
+                            <MenuItem Header="Delete" 
+                                      CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=SelectedItems}"
+                                      Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"/>
+                        </ContextMenu.Items>
+                    </ContextMenu>
+                </DataGrid.Resources>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                        <Setter Property="ContextMenu" Value="{StaticResource ticketContextMenu}" />
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Name" SortMemberPath="Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Remote Name" SortMemberPath="RemoteName">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RemoteName}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="IsTracking" SortMemberPath="IsTracking">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <uc:BaseCheckBox IsChecked="{Binding IsTracking}" IsHitTestVisible="False"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <cc:Button Content="    Clear Sorting    " Margin="0,0,10,0" Click="ClearSorting_Click"/>
+                <cc:Button Content="    Load/Refresh Branches    " Margin="0,0,10,0" Command="{Binding InitializeAndLoadGitBranchesCommand}" IsDefault="True"/>
+                <cc:Button Content="    Close    " Click="Close_Click"/>
+            </StackPanel>
+        </Grid>
+    
+    </Grid>
+
+</Window>
