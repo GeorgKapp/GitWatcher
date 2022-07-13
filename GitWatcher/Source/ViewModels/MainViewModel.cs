@@ -6,9 +6,17 @@ namespace GitWatcher.Source.ViewModels
     {
         public MainViewModel()
         {
-            InitializeServices();
+            _messageService = new DialogService();
+            _gitService = new GitService();
+            _fileService = new FileService();
+
+            InitializeViewModel();
+        }
+
+        private void InitializeViewModel()
+        {
             var defaultDir = Settings.Default.DefaultDirectory;
-            if(!string.IsNullOrWhiteSpace(defaultDir))
+            if (!string.IsNullOrWhiteSpace(defaultDir))
             {
                 RepositoryPath = defaultDir;
                 InitializeAndLoadGitBranches();
@@ -140,21 +148,14 @@ namespace GitWatcher.Source.ViewModels
             }
         }
 
-        private void InitializeServices()
-        {
-            _messageService = new DialogService();
-            _gitService = new GitService(_messageService);
-            _fileService = new FileService();
-        }
-
         public void Dispose()
         {
             _gitRepos.Dispose();
         }
 
-        private DialogService _messageService;
-        private GitService _gitService;
-        private FileService _fileService;
+        private readonly DialogService _messageService;
+        private readonly GitService _gitService;
+        private readonly FileService _fileService;
 
     }
 }

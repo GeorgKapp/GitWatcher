@@ -2,10 +2,6 @@
 {
     internal class GitService
     {
-        public GitService(DialogService dialogService)
-        {
-            _dialogService = dialogService;
-        }
         public Repository GetRepositoryForPath(string repositoryPath)
         {
             if (!Directory.Exists(repositoryPath))
@@ -98,7 +94,5 @@
             };
             return options;
         }
-
-        private DialogService _dialogService;
     }
 }
