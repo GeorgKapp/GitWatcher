@@ -66,49 +66,120 @@
                     </behaviors:EventTrigger>
                 </behaviors:Interaction.Triggers>
             </cc:TextBox>
-            
-            <DataGrid x:Name="dataGrid" Grid.Row="1" CanUserAddRows="False" ItemsSource="{Binding BranchesView, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False">
 
-                <DataGrid.Resources>
-                    <ContextMenu x:Key="ticketContextMenu">
-                        <ContextMenu.Items>
-                            <MenuItem Header="Delete" 
+            <TabControl Grid.Row="1">
+                <TabItem Header="Local" Background="White">
+                    <DataGrid x:Name="dataGridLocal" CanUserAddRows="False" ItemsSource="{Binding BranchesView, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <DataGrid.Resources>
+                            <ContextMenu x:Key="itemContextMenu">
+                                <ContextMenu.Items>
+                                    <MenuItem Header="Delete" 
                                       CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=SelectedItems}"
                                       Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"/>
-                        </ContextMenu.Items>
-                    </ContextMenu>
-                </DataGrid.Resources>
+                                </ContextMenu.Items>
+                            </ContextMenu>
+                        </DataGrid.Resources>
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
-                        <Setter Property="ContextMenu" Value="{StaticResource ticketContextMenu}" />
-                    </Style>
-                </DataGrid.RowStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                <Setter Property="ContextMenu" Value="{StaticResource itemContextMenu}" />
+                            </Style>
+                        </DataGrid.RowStyle>
 
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Name" SortMemberPath="Name">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Remote Name" SortMemberPath="RemoteName">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding RemoteName}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="IsTracking" SortMemberPath="IsTracking">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <uc:BaseCheckBox IsChecked="{Binding IsTracking}" IsHitTestVisible="False"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Name" SortMemberPath="Name">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Remote Name" SortMemberPath="RemoteName">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RemoteName}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="IsTracking" SortMemberPath="IsTracking">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <uc:BaseCheckBox IsChecked="{Binding IsTracking}" IsHitTestVisible="False"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="IsDefault" SortMemberPath="IsDefault">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <uc:BaseCheckBox IsChecked="{Binding IsDefault}" IsHitTestVisible="False"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Is Current Head" SortMemberPath="IsCurrentHead">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <uc:BaseCheckBox IsChecked="{Binding IsCurrentHead}" IsHitTestVisible="False"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                
+                <TabItem Header="Remote" Background="White">
+                    
+                    <DataGrid x:Name="dataGridRemote" CanUserAddRows="False" ItemsSource="{Binding RemoteBranchesView, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                        <DataGrid.Resources>
+                            <ContextMenu x:Key="itemContextMenu">
+                                <ContextMenu.Items>
+                                    <MenuItem Header="Delete" 
+                                      CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=SelectedItems}"
+                                      Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"/>
+                                </ContextMenu.Items>
+                            </ContextMenu>
+                        </DataGrid.Resources>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                <Setter Property="ContextMenu" Value="{StaticResource itemContextMenu}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Name" SortMemberPath="Name">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Remote Name" SortMemberPath="RemoteName">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RemoteName}" TextAlignment="Left" FontSize="15" FontFamily="{DynamicResource BaseFontFamily}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="IsTracking" SortMemberPath="IsTracking">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <uc:BaseCheckBox IsChecked="{Binding IsTracking}" IsHitTestVisible="False"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="IsDefault" SortMemberPath="IsDefault">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <uc:BaseCheckBox IsChecked="{Binding IsDefault}" IsHitTestVisible="False"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
 
         </Grid>
 

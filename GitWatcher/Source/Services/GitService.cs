@@ -2,6 +2,10 @@
 {
     internal class GitService
     {
+        public GitService(DialogService dialogService)
+        {
+            _dialogService = dialogService;
+        }
         public Repository GetRepositoryForPath(string repositoryPath)
         {
             if (!Directory.Exists(repositoryPath))
@@ -25,5 +29,13 @@
         {
             repository.Branches.Remove(branch);
         }
+
+        public string GetRemoteBranchTargetIdentifier(Repository repository)
+        {
+            var headBranch = repository.Branches.Where(p => p.FriendlyName == "origin/HEAD").First();
+            return headBranch.Reference.ResolveToDirectReference().TargetIdentifier;
+        }
+
+        private DialogService _dialogService;
     }
 }

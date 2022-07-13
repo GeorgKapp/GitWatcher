@@ -2,6 +2,7 @@
 {
     internal class DialogService
     {
+        public void ShowError(string error) => Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         public void ShowError(Exception exception) => Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         public MessageBoxResult Show(string messageBoxText) => MessageBox.Show(messageBoxText);
         public MessageBoxResult Show(string messageBoxText, string caption) => MessageBox.Show(messageBoxText, caption);

@@ -6,6 +6,7 @@ namespace GitWatcher.Source.ViewModels
     {
         public MainViewModel()
         {
+            InitializeServices();
             var defaultDir = Settings.Default.DefaultDirectory;
             if(!string.IsNullOrWhiteSpace(defaultDir))
             {
@@ -47,19 +48,37 @@ namespace GitWatcher.Source.ViewModels
         {
             if (branchesView != null)
                 branchesView.Refresh();
+
+            if (remoteBranchesView != null)
+                remoteBranchesView.Refresh();
         }
 
         [ICommand]
         private void DeleteItem(System.Collections.IList items)
         {
+            var branchModels = items.Cast<BranchModel>();
+            foreach(var model in branchModels)
+            {
+                if (model.IsDefault)
+                {
+                    _messageService.ShowError($"Removing of the default branch: {model.Name} is not possible !");
+                    return;
+                }
+
+                if (model.IsCurrentHead)
+                {
+                    _messageService.ShowError($"Removing of the current head branch: {model.Name} is not possible !");
+                    return;
+                }
+            }
+
             var result = _messageService.Show("Are you sure you want to delete the selected branches ?", "", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.Cancel)
                 return;
 
             foreach(var item in items.Cast<BranchModel>())
-            {
                 _gitService.RemoveBranch(_gitRepos, item.Branch);
-            }
+
             LoadBranches();
         }
 
@@ -93,16 +112,27 @@ namespace GitWatcher.Source.ViewModels
         {
             try
             {
-                Branches = _gitService.GetGitBranchesForRepository(_gitRepos).Select(p => new BranchModel
+                var branches = _gitService.GetGitBranchesForRepository(_gitRepos);
+                var defaultBranchTargetIdentifier = _gitService.GetRemoteBranchTargetIdentifier(_gitRepos);
+
+                var branchModels = branches.Select(p => new BranchModel
                 {
                     Branch = p,
                     IsTracking = p.IsTracking,
                     Name = p.FriendlyName,
-                    RemoteName = p.CanonicalName
+                    RemoteName = p.CanonicalName,
+                    IsCurrentHead = p.IsCurrentRepositoryHead,
+                    IsDefault = p.Reference.TargetIdentifier == defaultBranchTargetIdentifier
                 }).ToList();
+
+                Branches = branchModels.Where(p => !p.Branch.IsRemote).ToList();
+                RemoteBranches = branchModels.Where(p => p.Branch.IsRemote).ToList();
 
                 BranchesView = CollectionViewSource.GetDefaultView(Branches);
                 BranchesView.Filter = branchModel => ApplyFilter((BranchModel)branchModel);
+
+                RemoteBranchesView = CollectionViewSource.GetDefaultView(RemoteBranches);
+                RemoteBranchesView.Filter = branchModel => ApplyFilter((BranchModel)branchModel);
             }
             catch (Exception exception)
             {
@@ -110,13 +140,21 @@ namespace GitWatcher.Source.ViewModels
             }
         }
 
+        private void InitializeServices()
+        {
+            _messageService = new DialogService();
+            _gitService = new GitService(_messageService);
+            _fileService = new FileService();
+        }
+
         public void Dispose()
         {
             _gitRepos.Dispose();
         }
 
-        private readonly GitService _gitService = new GitService();
-        private readonly FileService _fileService = new FileService();
-        private readonly DialogService _messageService = new DialogService();
+        private DialogService _messageService;
+        private GitService _gitService;
+        private FileService _fileService;
+
     }
 }

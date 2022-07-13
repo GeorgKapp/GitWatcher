@@ -9,6 +9,12 @@
         }
         private void ClearSorting_Click(object sender, RoutedEventArgs e)
         {
+            ClearSorting(dataGridLocal);
+            ClearSorting(dataGridRemote);
+        }
+
+        private void ClearSorting(DataGrid dataGrid)
+        {
             var view = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource);
             if (view != null)
             {
