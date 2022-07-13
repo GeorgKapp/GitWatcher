@@ -15,3 +15,4 @@ global using System.ComponentModel;
 global using System.Windows.Data;
 global using GitWatcher.Properties;
 global using GitWatcher.Source.ViewModels;
+global using System.Diagnostics;
