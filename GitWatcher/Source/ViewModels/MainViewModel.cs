@@ -1,9 +1,20 @@
-﻿
-
-namespace GitWatcher.Source.ViewModels
+﻿namespace GitWatcher.Source.ViewModels
 {
-    internal partial class MainViewModel : ObservableObject, IDisposable
+    internal partial class MainViewModel : IDisposable
     {
+        private ICommand _openGitRepositoryCommand;
+        public ICommand OpenGitRepositoryCommand => _openGitRepositoryCommand ??= new SimpleCommand(() => OpenGitRepository());
+
+        private ICommand _initializeAndLoadGitBranches;
+        public ICommand InitializeAndLoadGitBranchesCommand => _initializeAndLoadGitBranches ??= new SimpleCommand(() => InitializeAndLoadGitBranches());
+
+        private ICommand _refreshBranchesViewBranches;
+        public ICommand RefreshBranchesViewCommand => _refreshBranchesViewBranches ??= new SimpleCommand(() => RefreshBranchesView());
+
+        private ICommand _deleteItemCommand;
+        public ICommand DeleteItemCommand => _deleteItemCommand ??= new SimpleParamaterCommand((object items) => DeleteItem(items));
+
+
         public MainViewModel()
         {
             _messageService = new DialogService();
@@ -23,7 +34,6 @@ namespace GitWatcher.Source.ViewModels
             }
         }
 
-        [ICommand]
         private void OpenGitRepository()
         {
             try
@@ -44,27 +54,24 @@ namespace GitWatcher.Source.ViewModels
             }
         }
 
-        [ICommand]
         private void InitializeAndLoadGitBranches()
         {
             InitializeRepository();
             LoadBranches();
         }
 
-        [ICommand]
         private void RefreshBranchesView()
         {
-            if (branchesView != null)
-                branchesView.Refresh();
+            if (_branchesView != null)
+                _branchesView.Refresh();
 
-            if (remoteBranchesView != null)
-                remoteBranchesView.Refresh();
+            if (_remoteBranchesView != null)
+                _remoteBranchesView.Refresh();
         }
 
-        [ICommand]
-        private void DeleteItem(System.Collections.IList items)
+        private void DeleteItem(object items)
         {
-            var branchModels = items.Cast<BranchModel>();
+            var branchModels = ((System.Collections.IList)items).Cast<BranchModel>();
             foreach(var model in branchModels)
             {
                 if (model.IsDefault)
@@ -84,7 +91,7 @@ namespace GitWatcher.Source.ViewModels
             if (result == MessageBoxResult.Cancel)
                 return;
 
-            foreach(var item in items.Cast<BranchModel>())
+            foreach(var item in ((System.Collections.IList)items).Cast<BranchModel>())
                 _gitService.RemoveBranch(_gitRepos, item.Branch);
 
             LoadBranches();
@@ -156,6 +163,5 @@ namespace GitWatcher.Source.ViewModels
         private readonly DialogService _messageService;
         private readonly GitService _gitService;
         private readonly FileService _fileService;
-
     }
 }

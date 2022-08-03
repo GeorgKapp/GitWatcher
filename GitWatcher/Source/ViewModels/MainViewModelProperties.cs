@@ -1,26 +1,72 @@
 ﻿namespace GitWatcher.Source.ViewModels
 {
-    internal partial class MainViewModel : ObservableObject
+    internal partial class MainViewModel : PropertyChangedObject
     {
-        [ObservableProperty]
-        private string? repositoryPath;
+        private string? _repositoryPath;
+        public string? RepositoryPath
+        {
+            get => _repositoryPath;
+            set
+            {
+                SetField(ref _repositoryPath, value);
+            }
+        }
 
-        [ObservableProperty]
-        [AlsoNotifyChangeFor(nameof(branchesView))]
-        [AlsoNotifyChangeFor(nameof(remoteBranchesView))]
-        private string? searchText;
+        private string? _searchText;
+        public string? SearchText
+        {
+            get => _searchText;
+            set
+            {
+                SetField(ref _searchText, value);
+                InvokePropertyChanged(nameof(BranchesView));
+                InvokePropertyChanged(nameof(RemoteBranchesView));
+            }
+        }
 
-        [ObservableProperty]
-        private List<BranchModel> branches = new List<BranchModel>();
 
-        [ObservableProperty]
-        private List<BranchModel> remoteBranches = new List<BranchModel>();
+        private List<BranchModel> _branches = new List<BranchModel>();
+        public List<BranchModel> Branches
+        {
+            get => _branches;
+            set
+            {
+                SetField(ref _branches, value);
+            }
+        }
 
-        [ObservableProperty]
-        private ICollectionView? branchesView;
 
-        [ObservableProperty]
-        private ICollectionView? remoteBranchesView;
+        private List<BranchModel> _remoteBranches = new List<BranchModel>();
+        public List<BranchModel> RemoteBranches
+        {
+            get => _remoteBranches;
+            set
+            {
+                SetField(ref _remoteBranches, value);
+            }
+        }
+
+
+        private ICollectionView? _branchesView;
+        public ICollectionView? BranchesView
+        {
+            get => _branchesView;
+            set
+            {
+                SetField(ref _branchesView, value);
+            }
+        }
+
+
+        private ICollectionView? _remoteBranchesView;
+        public ICollectionView? RemoteBranchesView
+        {
+            get => _remoteBranchesView;
+            set
+            {
+                SetField(ref _remoteBranchesView, value);
+            }
+        }
 
         private Repository _gitRepos;
     }
